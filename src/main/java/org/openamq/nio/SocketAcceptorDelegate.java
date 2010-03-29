@@ -242,7 +242,7 @@ public class SocketAcceptorDelegate extends BaseIoAcceptor
                     // removed from managedSessions by the SocketIoProcessor.
                     continue;
                 }
-                tempSessions[i].close().setCallback(new IoFuture.Callback()
+                tempSessions[i].close().addListener(new IoFutureListener()
                 {
                     public void operationComplete(IoFuture future)
                     {

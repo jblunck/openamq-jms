@@ -2,7 +2,7 @@ package org.openamq.pool;
 
 import org.apache.mina.common.ThreadModel;
 import org.apache.mina.common.IoFilterChain;
-import org.apache.mina.common.ReferenceCountingIoFilterWrapper;
+import org.apache.mina.filter.ReferenceCountingIoFilter;
 
 public class ReadWriteThreadModel implements ThreadModel
 {
@@ -14,7 +14,7 @@ public class ReadWriteThreadModel implements ThreadModel
         PoolingFilter asyncWrite = new PoolingFilter(executor, PoolingFilter.WRITE_EVENTS,
                                                      "AsynchronousWriteFilter");
 
-        chain.addFirst("AsynchronousReadFilter", new ReferenceCountingIoFilterWrapper(asyncRead));
-        chain.addLast("AsynchronousWriteFilter", new ReferenceCountingIoFilterWrapper(asyncWrite));
+        chain.addFirst("AsynchronousReadFilter", new ReferenceCountingIoFilter(asyncRead));
+        chain.addLast("AsynchronousWriteFilter", new ReferenceCountingIoFilter(asyncWrite));
     }
 }

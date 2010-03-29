@@ -401,4 +401,9 @@ class SocketSessionImpl extends BaseIoSession
             }
         }
     }
+
+	public IoServiceConfig getServiceConfig() {
+		// TODO Auto-generated method stub
+		throw new RuntimeException( );
+	}
 }

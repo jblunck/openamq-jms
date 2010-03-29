@@ -22,6 +22,7 @@ import org.apache.mina.common.IoFilter.WriteRequest;
 import org.apache.mina.common.IoFilterChain;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoService;
+import org.apache.mina.common.IoServiceConfig;
 import org.apache.mina.common.IoSessionConfig;
 import org.apache.mina.common.RuntimeIOException;
 import org.apache.mina.common.TransportType;
@@ -418,4 +419,9 @@ class SocketSessionImpl extends BaseIoSession
             }
         }
     }
+
+	public IoServiceConfig getServiceConfig() {
+		// TODO Auto-generated method stub
+		throw new RuntimeIOException();
+	}
 }
