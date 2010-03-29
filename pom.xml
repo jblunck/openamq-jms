@@ -1,14 +1,126 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openamq</groupId>
-  <artifactId>jms</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <dependencies>
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>1.1</version>
-      <scope>compile</scope>
-    </dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openamq</groupId>
+	<artifactId>jms</artifactId>
+	<version>1.2.1-SNAPSHOT</version>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.3</version>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>8.7</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks name="generate" depends="check-generate" unless="generate.notRequired"
+								description="Generate framing classes from protocol specification">
+								<echo>Build Dir: ${project.build.directory}</echo>
+								<property name="plugin_classpath" refid="maven.plugin.classpath" />
+								<echo>Plugin Classpath: ${plugin_classpath}</echo>
+								<property name="generate.src"
+									value="${project.build.directory}/generated-sources/main/java" />
+								<property name="generate.output" value="${generate.src}/org/openamq/framing" />
+								<property name="generate.resources" value="${basedir}/src/main/amqp" />
+								<property name="generate.spec" value="${generate.resources}/amqp.0-9.xml" />
+								<mkdir dir="${generate.src}/org/openamq/client" />
+								<copy file="${generate.resources}/Version.java" todir="${generate.src}/org/openamq/client" />
+								<replace token="@@version@@" value="${project.version}"
+									file="${generate.src}/org/openamq/client/Version.java" />
+								<mkdir dir="${generate.output}" />
+								<java classname="net.sf.saxon.Transform" classpathref="maven.plugin.classpath"
+									fork="true">
+									<arg value="-o" />
+									<arg value="${generate.output}/results.out" />
+									<arg value="${generate.spec}" />
+									<arg value="${generate.resources}/framing.xsl" />
+									<arg value="asl_base=${asl.base}" />
+									<arg value="registry_name=MainRegistry" />
+								</java>
+								<java classname="net.sf.saxon.Transform" classpathref="maven.plugin.classpath"
+									fork="true">
+									<arg value="-o" />
+									<arg value="${generate.output}/registry.out" />
+									<arg value="${generate.resources}/registry.template" />
+									<arg value="${generate.resources}/registry.xsl" />
+								</java>
+							</tasks>
+							<sourceRoot>${project.build.directory}/generated-sources/main/java</sourceRoot>
+							<testSourceRoot>${project.build.directory}/generated-sources/test/java</testSourceRoot>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>javax.jms</groupId>
+			<artifactId>jms</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.15</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.mina</groupId>
+			<artifactId>mina-core</artifactId>
+			<version>0.9.5</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>backport-util-concurrent</groupId>
+			<artifactId>backport-util-concurrent</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 </project>
