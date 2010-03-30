@@ -13,7 +13,7 @@
 <property name = "lib"                value = "${basedir}/lib" />
 <property name = "generate.saxon"     value = "${lib}/saxon/saxon8.jar" />
 <property name = "generate.resources" value = "${basedir}/resources" />
-<property name = "generate.spec"      value = "${generate.resources}/amqp.0-9.xml" />
+<property name = "generate.spec"      value = "${generate.resources}/amqp0-8.xml" />
 <property name = "generate.src"       value = "${basedir}/generated/src" />
 <property name = "generate.output"    value = "${generate.src}/org/openamq/framing" />
 <property name = "client.src"         value = "${basedir}/src" />

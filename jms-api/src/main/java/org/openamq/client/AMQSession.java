@@ -918,7 +918,7 @@ public class AMQSession extends Closeable implements Session, QueueSession, Topi
         AMQFrame jmsConsume = BasicConsumeBody.createAMQFrame(_channelId, 0,
                                                               queueName, tag, noLocal,
                                                               acknowledgeMode == Session.NO_ACKNOWLEDGE,
-                                                              exclusive, true, null);
+                                                              exclusive, true);
 
         protocolHandler.writeFrame(jmsConsume);
         return tag;

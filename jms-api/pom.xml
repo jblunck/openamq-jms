@@ -35,7 +35,7 @@
 									value="${project.build.directory}/generated-sources/main/java" />
 								<property name="generate.output" value="${generate.src}/org/openamq/framing" />
 								<property name="generate.resources" value="${basedir}/src/main/amqp" />
-								<property name="generate.spec" value="${generate.resources}/amqp.0-9.xml" />
+								<property name="generate.spec" value="${generate.resources}/amqp0-8.xml" />
 								<mkdir dir="${generate.src}/org/openamq/client" />
 								<copy file="${generate.resources}/Version.java" todir="${generate.src}/org/openamq/client" />
 								<replace token="@@version@@" value="${project.version}"
