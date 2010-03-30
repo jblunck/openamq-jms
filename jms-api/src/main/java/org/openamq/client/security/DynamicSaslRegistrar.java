@@ -35,6 +35,10 @@ public class DynamicSaslRegistrar
         {
             _logger.error("Error reading properties: " + e, e);
         }
+        catch (NullPointerException e)
+        {
+        	_logger.error("Error reading properties: " + e, e);
+        }
         finally
         {
             if (is != null)
