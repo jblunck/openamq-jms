@@ -275,7 +275,9 @@ public class BasicMessageConsumer extends Closeable implements MessageConsumer
             final AbstractJMSMessage m = returnMessageOrThrow(o);
             postDeliver(m);
             return m;
-        }
+        } catch (InterruptedException e) {
+			return null;
+		}
         finally
         {
             releaseReceiving();
@@ -289,9 +291,10 @@ public class BasicMessageConsumer extends Closeable implements MessageConsumer
      * @return a message only if o is a Message
      * @throws JMSException if the argument is a throwable. If it is a JMSException it is rethrown as is, but if not
      * a JMSException is created with the linked exception set appropriately
+     * @throws InterruptedException 
      */
     private AbstractJMSMessage returnMessageOrThrow(Object o)
-            throws JMSException
+            throws JMSException, InterruptedException
     {
         // errors are passed via the queue too since there is no way of interrupting the poll() via the API.
         if (o instanceof Throwable)
@@ -302,6 +305,10 @@ public class BasicMessageConsumer extends Closeable implements MessageConsumer
                 e.setLinkedException((Exception) o);
             }
             throw e;
+        }
+        else if (o == null)
+        {
+        	throw new InterruptedException("Timeout");
         }
         else
         {

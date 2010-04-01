@@ -931,32 +931,32 @@ public class AMQSession extends Closeable implements Session, QueueSession, Topi
 
     public QueueReceiver createReceiver(Queue queue) throws JMSException
     {
-        return (QueueReceiver) createConsumer(queue);
+        return new QueueReceiverAdaptor(queue, createConsumer(queue));
     }
 
     public QueueReceiver createReceiver(Queue queue, String messageSelector) throws JMSException
     {
-        return (QueueReceiver) createConsumer(queue, messageSelector);
+        return new QueueReceiverAdaptor(queue, createConsumer(queue, messageSelector));
     }
 
     public QueueSender createSender(Queue queue) throws JMSException
     {
-        return (QueueSender) createProducer(queue);
+        return new QueueSenderAdaptor(queue, createProducer(queue));
     }
 
     public Topic createTopic(String topicName) throws JMSException
     {
-        return new AMQTopic(topicName);
+        return new AMQTopic(topicName, true);
     }
 
     public TopicSubscriber createSubscriber(Topic topic) throws JMSException
     {
-        return (TopicSubscriber) createConsumer(topic);
+        return new TopicSubscriberAdaptor(topic,(BasicMessageConsumer) createConsumer(topic));
     }
 
     public TopicSubscriber createSubscriber(Topic topic, String messageSelector, boolean noLocal) throws JMSException
     {
-        return (TopicSubscriber) createConsumer(topic, messageSelector, noLocal);
+        return new TopicSubscriberAdaptor(topic, (BasicMessageConsumer) createConsumer(topic, messageSelector, noLocal));
     }
 
     /**
@@ -985,7 +985,7 @@ public class AMQSession extends Closeable implements Session, QueueSession, Topi
 
     public TopicPublisher createPublisher(Topic topic) throws JMSException
     {
-        return (TopicPublisher) createProducer(topic);
+        return new TopicPublisherAdaptor(topic, createProducer(topic));
     }
 
     public QueueBrowser createBrowser(Queue queue) throws JMSException
