@@ -51,7 +51,7 @@ public class TestPublisher
             createConnection(host, port, clientID);
             
             _session = (Session) _connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            AMQTopic destination = new AMQTopic(commandQueueName);
+            AMQTopic destination = new AMQTopic(commandQueueName, true);
             MessageProducer producer = (MessageProducer) _session.createProducer(destination);
 
             _connection.start();
