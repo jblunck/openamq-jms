@@ -64,7 +64,7 @@ public class TestSubscriber
 
             _logger.info("Message selector is <" + selector + ">...");
 
-            Topic t = new AMQTopic("pubsub", false);
+            Topic t = new AMQTopic("pubsub", true);
             MessageConsumer consumer1 = session1.createConsumer(t,
                                                                 100, false, false, selector);
             MessageConsumer consumer2 = session2.createConsumer(t,

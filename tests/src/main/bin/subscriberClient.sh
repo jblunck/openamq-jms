@@ -1,8 +1,10 @@
 #!/bin/bash
 #  Launcher script for OpenAMQ/JMS test program
 
+BASE_DIRECTORY=$(readlink -f $(dirname $0))
+
 #  Find Java and required JAR files
-LAUNCHER_JAR=openamq-jms-launch.jar
+LAUNCHER_JAR=openamq-jms-tests-${project.version}.jar
 if [ -n "$JAVA_HOME" ]; then
     JAVA=$JAVA_HOME/bin/java
 else
@@ -12,11 +14,8 @@ OPENAMQ_JAVA_HOME=
 if [ -n "$IBASE" -a -f "$IBASE/java/lib/$LAUNCHER_JAR" ]; then
     OPENAMQ_JAVA_HOME=$IBASE/java/lib
 fi
-if [ -f "../dist/$LAUNCHER_JAR" ]; then
-    OPENAMQ_JAVA_HOME=../dist
-fi
-if [ -f "./dist/$LAUNCHER_JAR" ]; then
-    OPENAMQ_JAVA_HOME=./dist
+if [ -f "$BASE_DIRECTORY/../jars/$LAUNCHER_JAR" ]; then
+    OPENAMQ_JAVA_HOME=$(readlink -f "$BASE_DIRECTORY/../jars/")
 fi
 if [ ! -f "$OPENAMQ_JAVA_HOME/$LAUNCHER_JAR" ]; then
     cat <<EOM
@@ -33,9 +32,11 @@ EOM
     exit 1
 fi
 
+CLASSPATH=$(export JARS=""; for file in $(ls $OPENAMQ_JAVA_HOME/*.jar) ; do JARS="${JARS:+$JARS:}$file" ; done; echo $JARS)
+
 HOST=$1
 shift
 #  Execute the test
-exec $JAVA -Xmx1024m -Xms1024m -XX:NewSize=300m -cp $OPENAMQ_JAVA_HOME/openamq-jms-launch.jar \
-      -Damqj.logging.level="INFO" \
+exec $JAVA -Xmx1024m -Xms1024m -XX:NewSize=300m -cp $CLASSPATH \
+      -Damqj.logging.level="DEBUG" \
       org.openamq.pubsub1.TestSubscriber $HOST 5672 guest guest /test "Test1 = abc"
