@@ -197,7 +197,16 @@ public class JNDIInitialContextFactory implements InitialContextFactory {
 	}
 
 	private Topic createAMQTopic(String name, String key) {
-		return new AMQTopic(key, true);
+		String topicName = key;
+		String[] bindingKeys = null;
+		int i = key.indexOf(',');
+		
+		if (i != -1) {
+			topicName = key.substring(0, i);
+			bindingKeys = key.substring(i+1).split(",");
+		}
+		
+		return new AMQTopic(topicName, bindingKeys, true);
 	}
 
 	private void createTopics(Map<String, Object> bindings,

@@ -93,7 +93,7 @@ public class AMQQueue extends AMQDestination implements Queue
      */
     public AMQQueue(String destinationName, String queueName, String exchangeName, String exchangeClass, boolean exchangeDurable, boolean exchangeAutoDelete, String routingKey, boolean durable, boolean exclusive, boolean autoDelete)
     {
-        super(exchangeName, exchangeClass, exchangeDurable, exchangeAutoDelete, destinationName, durable, exclusive,
+        super(exchangeName, exchangeClass, exchangeDurable, exchangeAutoDelete, destinationName, null, durable, exclusive,
               autoDelete, queueName);
         if (exchangeClass == "fanout")
         {
@@ -133,15 +133,15 @@ public class AMQQueue extends AMQDestination implements Queue
         return 'Q' + getQueueName();
     }
 
-    public String getRoutingKey()
+    public String[] getRoutingKeys()
     {
         if (_routingKey == null)
         {
-            return getQueueName();
+            return new String[] { getQueueName() };
         }
         else
         {
-            return _routingKey;
+            return new String[] { _routingKey };
         }
     }
 

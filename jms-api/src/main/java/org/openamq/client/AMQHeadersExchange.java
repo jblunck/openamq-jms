@@ -15,9 +15,9 @@ public class AMQHeadersExchange extends AMQDestination
         return getDestinationName();
     }
 
-    public String getRoutingKey()
+    public String[] getRoutingKeys()
     {
-        return getDestinationName();
+    	return _routingKeys.clone();
     }
 
     public boolean isNameRequired()

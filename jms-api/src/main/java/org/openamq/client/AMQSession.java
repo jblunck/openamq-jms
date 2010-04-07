@@ -897,11 +897,13 @@ public class AMQSession extends Closeable implements Session, QueueSession, Topi
 
     private void bindQueue(AMQDestination amqd, String queueName, AMQProtocolHandler protocolHandler, FieldTable ft) throws AMQException
     {
-        AMQFrame queueBind = QueueBindBody.createAMQFrame(_channelId, 0,
-                                                          queueName, amqd.getExchangeName(),
-                                                          amqd.getRoutingKey(), true, ft);
-
-        protocolHandler.writeFrame(queueBind);
+    	for (String routingKey: amqd.getRoutingKeys()) {
+    		_logger.debug("Binding queue " + queueName + " to " + routingKey);
+    		AMQFrame queueBind = QueueBindBody.createAMQFrame(_channelId, 0,
+    				queueName, amqd.getExchangeName(),
+    				routingKey, true, ft);
+    		protocolHandler.writeFrame(queueBind);
+    	}
     }
 
     /**

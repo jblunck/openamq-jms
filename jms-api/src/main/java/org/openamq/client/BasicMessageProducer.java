@@ -10,6 +10,8 @@ import org.openamq.client.message.JMSBytesMessage;
 import org.openamq.AMQException;
 import org.openamq.framing.*;
 
+import java.util.Arrays;
+
 import javax.jms.*;
 import java.io.UnsupportedEncodingException;
 
@@ -326,10 +328,14 @@ public class BasicMessageProducer extends Closeable implements org.openamq.jms.M
     protected void sendImpl(AMQDestination destination, AbstractJMSMessage message, int deliveryMode, int priority,
                           long timeToLive, boolean mandatory, boolean immediate, boolean wait) throws JMSException
     {
-        AMQFrame publishFrame = BasicPublishBody.createAMQFrame(_channelId, 0, destination.getExchangeName(),
-                                                                destination.getRoutingKey(), mandatory, immediate);
+    	String[] routingKeys = destination.getRoutingKeys();
+    	AMQFrame publishFrame = BasicPublishBody.createAMQFrame(_channelId, 0, destination.getExchangeName(),
+                                                                routingKeys[0], mandatory, immediate);
+    	if (routingKeys.length > 1)
+    		_logger.warn("Destination " + destination.getQueueName() + " has too many Routing Keys defined: " +
+    				Arrays.toString(routingKeys));
 
-        long currentTime = 0;
+    	long currentTime = 0;
         if (!_disableTimestamps)
         {
             currentTime = System.currentTimeMillis();

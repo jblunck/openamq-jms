@@ -12,7 +12,12 @@ public class AMQTopic extends AMQDestination implements Topic
 
     public AMQTopic(String name, boolean temporary)
     {
-        super(AMQDestination.TOPIC_EXCHANGE_NAME, AMQDestination.TOPIC_EXCHANGE_CLASS, name, temporary, temporary, null);
+    	this(name, null, temporary);
+    }
+
+    public AMQTopic(String name, String[] bindingKeys, boolean temporary)
+    {
+        super(AMQDestination.TOPIC_EXCHANGE_NAME, AMQDestination.TOPIC_EXCHANGE_CLASS, false, false, name, bindingKeys, false, temporary, temporary, null);
         _isDurable = !temporary;
     }
 
@@ -24,7 +29,7 @@ public class AMQTopic extends AMQDestination implements Topic
      */
     public AMQTopic(AMQTopic topic, String clientId, String subscriptionName)
     {
-        super(AMQDestination.TOPIC_EXCHANGE_NAME, AMQDestination.TOPIC_EXCHANGE_CLASS, topic.getDestinationName(), false, false, clientId + ":" + subscriptionName);
+        super(AMQDestination.TOPIC_EXCHANGE_NAME, AMQDestination.TOPIC_EXCHANGE_CLASS, false, false, topic.getDestinationName(), topic.getRoutingKeys(), false, false, false, clientId + ":" + subscriptionName);
     }
 
     public String getTopicName() throws JMSException
@@ -37,9 +42,9 @@ public class AMQTopic extends AMQDestination implements Topic
         return 'T' + getDestinationName();
     }
 
-     public String getRoutingKey()
+    public String[] getRoutingKeys()
     {
-        return getDestinationName();
+    	 return _routingKeys.clone();
     }
 
     public boolean isNameRequired()

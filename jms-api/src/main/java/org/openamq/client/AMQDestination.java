@@ -1,5 +1,8 @@
 package org.openamq.client;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import javax.jms.Destination;
 
 public abstract class AMQDestination implements Destination
@@ -18,6 +21,8 @@ public abstract class AMQDestination implements Destination
 
     protected final String _destinationName;
 
+    protected final String[] _routingKeys;
+
     protected boolean _isDurable;
 
     protected final boolean _isExclusive;
@@ -25,7 +30,7 @@ public abstract class AMQDestination implements Destination
     protected final boolean _isAutoDelete;
 
     protected String _queueName;
-
+    
     protected String _exchangeName;
 
     protected String _exchangeClass;
@@ -36,26 +41,26 @@ public abstract class AMQDestination implements Destination
 
     protected AMQDestination(String exchangeName, String exchangeClass, String destinationName, String queueName)
     {
-        this(exchangeName, exchangeClass, false, false, destinationName, false, false, false, queueName);
+        this(exchangeName, exchangeClass, false, false, destinationName, null, false, false, false, queueName);
     }
 
     protected AMQDestination(String exchangeName, String exchangeClass, String destinationName)
     {
-        this(exchangeName, exchangeClass, false, false, destinationName, false, false, true, destinationName);
+        this(exchangeName, exchangeClass, false, false, destinationName, null, false, false, true, destinationName);
     }
 
     protected AMQDestination(String exchangeName, String exchangeClass, String destinationName, boolean isExclusive,
                              boolean isAutoDelete, String queueName)
     {
-        this(exchangeName, exchangeClass, false, false, destinationName, false, isExclusive, isAutoDelete, queueName);
+        this(exchangeName, exchangeClass, false, false, destinationName, null, false, isExclusive, isAutoDelete, queueName);
     }
 
     protected AMQDestination(String exchangeName, String exchangeClass, String destinationName, boolean isDurable, boolean isExclusive, boolean isAutoDelete, String queueName)
     {
-        this(exchangeName, exchangeClass, false, false, destinationName, isDurable, isExclusive, isAutoDelete, queueName);
+        this(exchangeName, exchangeClass, false, false, destinationName, null, isDurable, isExclusive, isAutoDelete, queueName);
     }
 
-    protected AMQDestination(String exchangeName, String exchangeClass, boolean isExchangeDurable, boolean isExchangeAutoDelete, String destinationName, boolean isDurable, boolean isExclusive, boolean isAutoDelete, String queueName)
+    protected AMQDestination(String exchangeName, String exchangeClass, boolean isExchangeDurable, boolean isExchangeAutoDelete, String destinationName, String[] routingKeys, boolean isDurable, boolean isExclusive, boolean isAutoDelete, String queueName)
     {
         if (destinationName == null)
         {
@@ -78,6 +83,12 @@ public abstract class AMQDestination implements Destination
         _isDurable = isDurable;
         _isExchangeDurable = isExchangeDurable;
         _isExchangeAutoDelete = isExchangeAutoDelete;
+
+    	HashSet<String> keys = new HashSet<String>();
+    	keys.add(getDestinationName());
+        if (routingKeys != null)
+        	keys.addAll(Arrays.asList(routingKeys));
+        _routingKeys = keys.toArray(new String[] { });
     }
 
     public abstract String getEncodedName();
@@ -142,7 +153,7 @@ public abstract class AMQDestination implements Destination
         _queueName = queueName;
     }
 
-    public abstract String getRoutingKey();
+    public abstract String[] getRoutingKeys();
 
     public boolean isExclusive()
     {
@@ -171,7 +182,7 @@ public abstract class AMQDestination implements Destination
         return "Destination: " + _destinationName + ", " +
                "Queue Name: " + _queueName + ", Exchange: " + _exchangeName +
                ", Exchange class: " + _exchangeClass + ", Exclusive: " + _isExclusive +
-               ", AutoDelete: " + _isAutoDelete + ", Routing  Key: " + getRoutingKey();
+               ", AutoDelete: " + _isAutoDelete + ", Routing  Key: " + Arrays.toString(getRoutingKeys());
     }
 
     public boolean equals(Object o)
