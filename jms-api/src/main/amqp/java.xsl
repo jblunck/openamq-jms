@@ -190,6 +190,9 @@ import java.util.Map;
  */
 class <xsl:value-of select="$registry_name"/>
 {
+	public static final int PROTOCOL_MAJOR = <xsl:value-of select="@protocol_major"/>;
+	public static final int PROTOCOL_MINOR = <xsl:value-of select="@protocol_minor"/>;
+
     static void register(Map map)
     {
         <xsl:for-each select="frame">

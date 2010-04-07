@@ -8,11 +8,10 @@ import org.openamq.AMQException;
 public class ProtocolInitiation extends AMQDataBlock implements EncodableAMQDataBlock
 {
     public char[] header = new char[]{'A','M','Q','P'};
-    // TODO: generate these constants automatically from the xml protocol spec file
     public byte protocolClass = 1;
     public byte protocolInstance = 1;
-    public byte protocolMajor = 0;
-    public byte protocolMinor = 9;
+    public byte protocolMajor = MainRegistry.PROTOCOL_MAJOR;
+    public byte protocolMinor = MainRegistry.PROTOCOL_MINOR;
 
     public long getSize()
     {

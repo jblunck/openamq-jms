@@ -17,10 +17,16 @@
         <xsl:attribute name="protocol">
             <xsl:value-of select="@comment"/>
             <xsl:text> (</xsl:text>
-                <xsl:text>major=</xsl:text><xsl:value-of select="option[@name='protocol_major']/@value"/>
-                <xsl:text>, minor=</xsl:text><xsl:value-of select="option[@name='protocol_minor']/@value"/> 
+                <xsl:text>major=</xsl:text><xsl:value-of select="@major"/>
+                <xsl:text>, minor=</xsl:text><xsl:value-of select="@minor"/> 
             <xsl:text>)</xsl:text>
-        </xsl:attribute>  
+        </xsl:attribute>
+        <xsl:attribute name="protocol_major">
+        <xsl:value-of select="@major"/>
+        </xsl:attribute>
+        <xsl:attribute name="protocol_minor">
+        <xsl:value-of select="@minor"/>
+        </xsl:attribute>
         <xsl:apply-templates mode="prepare1" select="inherit"/> 
         <xsl:apply-templates mode="prepare1" select="include"/> 
         <xsl:apply-templates mode="prepare1" select="domain"/> 

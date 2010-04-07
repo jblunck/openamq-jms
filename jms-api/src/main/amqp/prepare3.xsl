@@ -14,6 +14,8 @@
 <xsl:template match="frames" mode="prepare3">
     <frames>
         <xsl:copy-of select="@protocol"/>
+		<xsl:copy-of select="@protocol_major"/>
+		<xsl:copy-of select="@protocol_minor"/>
         <xsl:apply-templates mode="prepare3"/>
     </frames>
 </xsl:template>
