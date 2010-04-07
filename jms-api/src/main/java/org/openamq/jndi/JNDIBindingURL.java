@@ -56,9 +56,8 @@ public class JNDIBindingURL {
 	public JNDIBindingURL(URI uri) throws URISyntaxException {
 		this._uri = uri;
 		this._map = new HashMap<String,List<String>>();
-		
-		if (uri.getQuery() != null)
-			parseOptionsQuery(uri.getQuery());
+		if (this.getQuery() != null)
+			parseOptionsQuery(this.getQuery());
 	}
 
 	public static JNDIBindingURL parse(String str) throws URISyntaxException {
@@ -84,7 +83,12 @@ public class JNDIBindingURL {
 	}
 
 	public String getQuery() {
-		return _uri.getQuery();
+		String query = "";
+		if (_uri.getQuery() != null)
+			query = query.concat(_uri.getQuery());
+		if (_uri.getFragment() != null)
+			query = query.concat("#" + _uri.getFragment());
+		return query.isEmpty() ? null : query;
 	}
 
 	public String getQueueName() {

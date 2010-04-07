@@ -101,6 +101,18 @@ public class JNDIBindingURLTest {
 		assertEquals(null, url.getTopicName());
 	}
 
+	@Test
+	public void parseTopic3() throws URISyntaxException {
+		JNDIBindingURL url = JNDIBindingURL.parse(_urls[3]);
+		assertEquals("routingkey='stocks.#'", url.getQuery());
+	}
+
+	@Test
+	public void parseTopic4() throws URISyntaxException {
+		JNDIBindingURL url = JNDIBindingURL.parse(_urls[3]);
+		assertEquals("'stocks.#'", url.getOption("routingkey").get(0));
+	}
+
 	@Test(expected = URISyntaxException.class)
 	public void illegalURI() throws URISyntaxException {
 		JNDIBindingURL.parse("exch_class://exchname/");
