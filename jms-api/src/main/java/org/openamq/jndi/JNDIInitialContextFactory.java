@@ -26,6 +26,8 @@ package org.openamq.jndi;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -236,16 +238,47 @@ public class JNDIInitialContextFactory implements InitialContextFactory {
 
 		if (binding.getScheme().equals("direct")) {
 			_logger.debug("Creating direct exchange");
-			throw new OperationNotSupportedException();
+			String queuename = binding.getQueueName();
+			String destination = binding.getPath();
+			while (destination.startsWith("/"))
+				destination = destination.substring(1);
+			if (destination.lastIndexOf(queuename) > 1)
+				destination = destination.substring(0, destination.lastIndexOf(queuename)-1);
+			String routingKey = null;
+			try {
+				routingKey = binding.getOption("routingkey").get(0);
+			} catch (Exception e) { }
+			boolean exclusive = binding.getOption("exclusive").contains("true");
+			boolean durable = binding.getOption("durable").contains("true");
+			_logger.debug("Exchange: " + binding.getHost() + " Destination: " + destination + " Queuename: " +
+					queuename + " RoutingKey: " + routingKey + " Durable: " + durable);
+			if (queuename.isEmpty())
+				throw new IllegalArgumentException("Destination without a queue name defined " + bindingURL);
+			return new AMQQueue(destination, queuename, binding.getHost(), binding.getScheme(), routingKey, durable, exclusive, !durable);
 		} else if (binding.getScheme().equals("fanout")) {
 			_logger.debug("Creating fanout exchange");
-			throw new OperationNotSupportedException();
+			String queuename = binding.getQueueName();
+			boolean exclusive = binding.getOption("exclusive").contains("true");
+			boolean durable = binding.getOption("durable").contains("true");
+			_logger.debug("Exchange: " + binding.getHost() + " Queuename: " +
+					queuename + " Durable: " + durable);
+			if (queuename.isEmpty())
+				throw new IllegalArgumentException("Destination without a queue name defined " + bindingURL);
+			return new AMQQueue(queuename, queuename, binding.getHost(), binding.getScheme(), null, durable, exclusive, !durable);
 		} else if (binding.getScheme().equals("header")) {
 			_logger.debug("Creating header exchange");
 			throw new OperationNotSupportedException();
 		} else if (binding.getScheme().equals("topic")) {
 			_logger.debug("Creating topic exchange");
-			return new AMQTopic(binding.getTopicName(), true);
+			String[] routingKeys = null;
+			ArrayList<String> l = new ArrayList<String>();
+			l.addAll(binding.getOption("routingkey"));
+			l.addAll(binding.getOption("bindingkey"));
+			routingKeys = l.toArray(new String[] { });
+			boolean durable = binding.getOption("durable").contains("true");
+			_logger.debug("Exchange: " + binding.getHost() + " Topic: " + binding.getTopicName() + " RoutingKeys: " +
+					Arrays.toString(routingKeys) + " Durable: " + durable);
+			return new AMQTopic(binding.getTopicName(), routingKeys, durable);
 		}
 
 		_logger.warn("Binding: '" + binding + "' not supported");
