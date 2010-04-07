@@ -67,7 +67,8 @@ public class JNDIBindingURL {
 	}
 
 	public List<String> getOption(String key) {
-		return _map.get(key);
+		List<String> l = _map.get(key);
+		return l != null ? l : new ArrayList<String>();
 	}
 
 	public String getScheme() {
